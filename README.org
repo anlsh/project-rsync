@@ -1,0 +1,10 @@
+#+TITLE: rsync-project
+
+This is a package used to rsync local project to remote directory. To rsync a
+local project, the ~rsync-remote-base-dir~ should be set. If current local
+project is not a vc project, ~rsync-local-project-dir~ must be set.
+
+To rsync a local project, call ~rsync-project~. It is possible to modify
+~rsync-mode-hook~ so that before rsync, Emacs saves or formats buffers.
+
+
