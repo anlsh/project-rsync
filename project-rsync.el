@@ -61,6 +61,26 @@
 (defvar-local rsync-command nil
   "Shell command for rsync.")
 
+(defun rsync-setup ()
+  "Prepare the buffer for the rsync to work."
+  (setq rsync-local-project-dir
+        (if (project-current)
+            (string-remove-suffix "/" (cdr (project-current)))
+          nil))
+  (setq rsync-local-project-name
+        (if rsync-local-project-dir
+            (file-name-nondirectory rsync-local-project-dir)
+          nil))
+  (setq rsync-buffer-name
+        (if rsync-local-project-name
+            (concat "*rsync*-" rsync-local-project-name)
+          nil))
+  (setq rsync-command
+        (if (and rsync-local-project-dir rsync-remote-base-dir)
+            (format (concat rsync-command-base " %s %s")
+                    rsync-local-project-dir rsync-remote-base-dir)
+          nil)))
+
 ;;;###autoload
 (defun rsync-project ()
   "Run `rsync-command', show the message in `rsync-buffer-name'."
