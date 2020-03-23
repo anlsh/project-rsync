@@ -24,6 +24,8 @@
 
 ;;; Code:
 
+(require 'project)
+
 (defgroup rsync nil
   "Run rsync as inferior of Emacs."
   :group 'tool
@@ -36,40 +38,50 @@
   :group 'rsync)
 
 ;;;###autoload
-(defcustom rsync-remote-base-dir nil
-  "Remote directory.")
+(defcustom rsync-command-base "rsync -avP"
+  "Base rsync command."
+  :type 'hook
+  :group 'rsync)
 
 ;;;###autoload
-(defcustom rsync-local-project-dir (dir-without-slash (string-remove-suffix "/" (cdr (project-current))))
+(defcustom rsync-remote-base-dir nil
+  "Remote directory."
+  :type 'string
+  :group 'rsync)
+
+(defvar-local rsync-local-project-dir nil
   "Local project directory.")
 
-;;;###autoload
-(defcustom rsync-local-project-name (file-name-nondirectory rsync-local-project-name)
+(defvar-local rsync-local-project-name nil
   "Local project name.")
 
-;;;###autoload
-(defcustom rsync-buffer-name (concat "*rsync*-" rsync-local-project-name)
+(defvar-local rsync-buffer-name nil
   "Buffer name of rsync mode.")
 
-;;;###autoload
-(defcustom rsync-command (format "rsync -avP %s %s" rsync-local-project-dir rsync-remote-base-dir)
+(defvar-local rsync-command nil
   "Shell command for rsync.")
 
 ;;;###autoload
 (defun rsync-project ()
   "Run `rsync-command', show the message in `rsync-buffer-name'."
-  (shell-command rsync-command rsync-buffer-name))
+  (interactive)
+  (rsync-setup)
+  (if (and rsync-command rsync-buffer-name)
+      (shell-command rsync-command rsync-buffer-name)
+    (message "remote directory rsync-remote-base-dir must be set.")))
 
 ;;;###autoload
 (define-minor-mode rsync-minor-mode
   "Toggle rsync mode."
   nil " rsync"
-  :group 'rsync)
+  :group 'rsync
+  (if rsync-minor-mode
+      (rsync-setup)))
 
 (defvar rsync-minor-mode-map
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map special-mode-map)
-    (define-key-map map "g" 'rsync-project)
+    (define-key map "g" 'rsync-project)
     map)
   "Keymap for `rsync-minor-mode.'")
 
