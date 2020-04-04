@@ -31,19 +31,16 @@
   :group 'tool
   :group 'processes)
 
-;;;###autoload
 (defcustom rsync-mode-hook nil
   "Lost of hook functions run by  `rsync-mode'."
   :type 'hook
   :group 'rsync)
 
-;;;###autoload
 (defcustom rsync-command-base "rsync -avP"
   "Base rsync command."
   :type 'hook
   :group 'rsync)
 
-;;;###autoload
 (defcustom rsync-remote-base-dir nil
   "Remote directory."
   :type 'string
