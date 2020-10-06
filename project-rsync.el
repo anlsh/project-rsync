@@ -41,10 +41,8 @@
   :type 'hook
   :group 'rsync)
 
-(defcustom rsync-remote-base-dir nil
-  "Remote directory."
-  :type 'string
-  :group 'rsync)
+(defvar-local rsync-remote-base-dir nil
+  "Remote directory.")
 
 (defvar-local rsync-local-project-dir nil
   "Local project directory.")
