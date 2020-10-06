@@ -50,13 +50,22 @@
       (error "remote-project-dir is nil"))
   (let* ((buffer-name (format "*rsync-%s*" (projectile-project-name)))
          (command (format "%s %s %s"
-                          rsync-command-base (projectile-project-root) rsync-remote-base-dir)))
-    (with-output-to-temp-buffer buffer-name
-      (with-current-buffer buffer-name
-        (setq default-directory (projectile-project-root)))
-      (switch-to-buffer-other-window buffer-name)
-      (start-process-shell-command (format "rsync-process-%s" (projectile-project-name))
-                                   buffer-name command))))
+                          rsync-command-base (projectile-project-root) rsync-remote-base-dir))
+         (process-name (format "rsync-process-%s" (projectile-project-name))))
+    (with-current-buffer buffer-name
+      ;; TODO This doesn't seem to do what I want it to, projectile ibuffer still shows the
+      ;; process as not being part of any project
+      (setq default-directory (projectile-project-root))
+      (setq major-mode 'help-mode)
+      (if (get-buffer-process buffer-name)
+          (message "rsync currently in progress for %s, bringing that up instead"
+                   (projectile-project-name))
+        (progn
+          (let ((inhibit-read-only t))
+            (erase-buffer))
+          (start-process-shell-command process-name buffer-name command)))
+      (pop-to-buffer-same-window buffer-name)
+      (goto-char (point-min)))))
 
 (provide 'projectile-rsync)
 ;;; project-rsync.el ends here
