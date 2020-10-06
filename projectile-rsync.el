@@ -52,11 +52,12 @@
          (command (format "%s %s %s"
                           rsync-command-base (projectile-project-root) rsync-remote-base-dir))
          (process-name (format "rsync-process-%s" (projectile-project-name))))
+    (get-buffer-create buffer-name)
     (with-current-buffer buffer-name
       ;; TODO This doesn't seem to do what I want it to, projectile ibuffer still shows the
       ;; process as not being part of any project
       (setq default-directory (projectile-project-root))
-      (setq major-mode 'help-mode)
+      (help-mode)
       (if (get-buffer-process buffer-name)
           (message "rsync currently in progress for %s, bringing that up instead"
                    (projectile-project-name))
